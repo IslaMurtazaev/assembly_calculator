@@ -15,17 +15,14 @@ _start:
 	ldr r1, =start_menu
 	mov r2, #15
 	bl print
-input:
+input_variables:
 	@Take user input for operation
 	ldr r1, =operation_prompt
 	mov r2, #15
 	bl print 
 
-	mov r0, #0 @ stdin
-	ldr r1, =buffer @ load address of buffer
 	mov r2, #20 @ max bytes to read
-	mov r7, #3 @ read syscall
-	svc #0 
+	bl input 
 output:
 	ldr r1, =result
 	mov r2, #5
@@ -36,6 +33,15 @@ end:
 	svc #0
 
 @ Functions
+
+input:
+	@ Arguments: r2 = max_length
+	@ reads from stdin and loads it to buffer
+	mov r0, #0 @ stdin
+	ldr r1, =buffer @ load to buffer memory
+	mov r7, #3 @ read syscall
+	svc #0 @ invoke syscall
+	bx lr @ return to caller
 
 print:
 	@ Arguments: r1 = message, r2 = length
