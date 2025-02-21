@@ -5,6 +5,8 @@ buffer: .skip 100
 start_menu: .asciz "Calculator App\n"
 
 operation_prompt: .asciz "Enter Choice > "
+operand1_prompt: .asciz "Enter Operand 1 > "
+operand2_prompt: .asciz "Enter Operand 2 > "
 
 result: .asciz "Done\n"
 
@@ -21,8 +23,24 @@ input_variables:
 	mov r2, #15
 	bl print 
 
-	mov r2, #20 @ max bytes to read
-	bl input 
+	mov r2, #100 @ max bytes to read
+	bl input
+
+	@ Take user input for operand 1
+	ldr r1, =operand1_prompt
+	mov r2, #18
+	bl print
+
+	mov r2, #100
+	bl input
+
+	@ Take user input for operand 2
+	ldr r1, =operand2_prompt
+	mov r2, #18
+	bl print
+
+	mov r2, #100
+	bl input
 output:
 	ldr r1, =result
 	mov r2, #5
