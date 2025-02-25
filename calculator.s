@@ -71,16 +71,9 @@ output:
 	mov r1, r9 @ set first fmt param to operand1
 	mov r2, r10 @ set second fmt param to operand2
 	bl printf
-end:
-	@ print exit message
-	ldr r0, =str_fmt
-	ldr r1, =exit_msg
-	bl printf
 
-	@ sys exit call
-	mov r7, #1
-	mov r0, #0
-	svc #0
+	@ restart the program
+	b main
 
 @ Functions
 
@@ -136,3 +129,13 @@ input:
 	pop {lr}
 	bx lr
 
+end:
+	@ print exit message
+	ldr r0, =str_fmt
+	ldr r1, =exit_msg
+	bl printf
+
+	@ sys exit call
+	mov r7, #1
+	mov r0, #0
+	svc #0
