@@ -1,5 +1,5 @@
 .section .bss
-buffer: .skip 100
+buffer: .skip 4
 
 .section .data
 start_menu: .asciz "Calculator App\n"
@@ -8,43 +8,50 @@ operation_prompt: .asciz "Enter Choice > "
 operand1_prompt: .asciz "Enter Operand 1 > "
 operand2_prompt: .asciz "Enter Operand 2 > "
 
-result: .asciz "Done\n"
+str_fmt: .asciz "%s"
+int_fmt: .asciz "%d" @ Format string for integer input
+sum_fmt: .asciz "%d+%d=%d\n"
 
 .section .text
 .global _start
+.extern printf
+.extern scanf
+
 _start:
 	@ Print start menu
+	ldr r0, =str_fmt
 	ldr r1, =start_menu
-	mov r2, #15
-	bl print
+	bl printf
 input_variables:
-	@Take user input for operation
-	ldr r1, =operation_prompt
-	mov r2, #15
-	bl print 
+	@ Take user input to calculate
+	@ Stores r8 = operation, r9 = operand1, r10 = operand2
 
-	mov r2, #100 @ max bytes to read
+	@ Take user input for operation
+	ldr r0, =str_fmt
+	ldr r1, =operation_prompt
+	bl printf
 	bl input
+	ldr r8, [r1]
 
 	@ Take user input for operand 1
+	ldr r0, =str_fmt
 	ldr r1, =operand1_prompt
-	mov r2, #18
-	bl print
-
-	mov r2, #100
+	bl printf
 	bl input
+	ldr r9, [r1]
 
 	@ Take user input for operand 2
+	ldr r0, =str_fmt
 	ldr r1, =operand2_prompt
-	mov r2, #18
-	bl print
-
-	mov r2, #100
+	bl printf
 	bl input
+	ldr r10, [r1]
 output:
-	ldr r1, =result
-	mov r2, #5
-	bl print
+	ldr r0, =sum_fmt
+	mov r1, r8
+	mov r2, r9
+	mov r3, r10
+	bl printf
 end:
 	mov r7, #1
 	mov r0, #0
@@ -53,18 +60,14 @@ end:
 @ Functions
 
 input:
-	@ Arguments: r2 = max_length
 	@ reads from stdin and loads it to buffer
-	mov r0, #0 @ stdin
-	ldr r1, =buffer @ load to buffer memory
-	mov r7, #3 @ read syscall
-	svc #0 @ invoke syscall
-	bx lr @ return to caller
+	push {lr}
 
-print:
-	@ Arguments: r1 = message, r2 = length
-	mov r0, #1 @ stdout
-	mov r7, #4 @ write syscall
-	svc #0 @ invoke syscall
-	bx lr @ return to caller
-	
+	ldr r0, =int_fmt
+	ldr r1, =buffer
+	bl scanf
+	ldr r1, =buffer
+
+	pop {lr}
+	bx lr
+
