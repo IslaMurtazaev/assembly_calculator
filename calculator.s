@@ -4,7 +4,7 @@ buffer: .skip 4
 .section .data
 
 @ UI messages
-menu: .asciz "Calculator App\n1-Add\n2-Subtract\n3-Multiply\n4-Divide\n5-Exit\n"
+menu_prompt: .asciz "Calculator App\n1-Add\n2-Subtract\n3-Multiply\n4-Divide\n5-Exit\n"
 operation_prompt: .asciz "Enter Choice > "
 operand1_prompt: .asciz "Enter Operand 1 > "
 operand2_prompt: .asciz "Enter Operand 2 > "
@@ -16,15 +16,12 @@ int_fmt: .asciz "%d"
 sum_fmt: .asciz "%d+%d=%d\n"
 
 .section .text
-.global _start
+.global main
 .extern printf
 .extern scanf
 
-_start:
-	@ Print start menu
-	ldr r0, =str_fmt
-	ldr r1, =menu
-	bl printf
+main:
+	bl menu
 input_operation:
 	@ Take user input for operation
 	@ store r8 = selected operation
@@ -72,6 +69,17 @@ end:
 	svc #0
 
 @ Functions
+
+menu:
+	@ Print menu
+	push {lr}
+
+	ldr r0, =str_fmt
+	ldr r1, =menu_prompt
+	bl printf
+
+	pop {lr}
+	bx lr
 
 input:
 	@ reads from stdin and loads it to buffer
