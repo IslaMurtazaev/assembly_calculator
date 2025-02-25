@@ -60,6 +60,10 @@ calculate:
 	beq add_operands
 	cmp r8, #2
 	beq sub_operands
+	cmp r8, #3
+	beq mul_operands
+	cmp r8, #4
+	beq div_operands
 output:
 	mov r3, r2 @ set the third fmt param to answer
 
@@ -97,12 +101,25 @@ add_operands:
 	add r2, r0, r1
 
 	b output
-	
 
 sub_operands:
 	@ args: r0 = operand1, r1 = operand2
 	@ returns: r2 = answer
 	sub r2, r0, r1
+
+	b output
+
+mul_operands:
+	@ args: r0 = operand1, r2 = operand2
+	@ returns: r2 = answer
+	mul r2, r0, r1
+
+	b output
+
+div_operands:
+	@ args: r0 = operand1, r2 = operand2
+	@ returns: r2 = answer
+	sdiv r2, r0, r1
 
 	b output
 
