@@ -51,11 +51,21 @@ input_operands:
 	bl printf
 	bl input
 	ldr r10, [r1]
+calculate:
+	@ set operands as aguments to the following function
+	mov r0, r9
+	mov r1, r10
+ 
+	cmp r8, #1
+	beq add_operands
+	cmp r8, #2
+	beq sub_operands
 output:
+	mov r3, r2 @ set the third fmt param to answer
+
 	ldr r0, =sum_fmt
-	mov r1, r8
-	mov r2, r9
-	mov r3, r10
+	mov r1, r9 @ set first fmt param to operand1
+	mov r2, r10 @ set second fmt param to operand2
 	bl printf
 end:
 	@ print exit message
@@ -80,6 +90,21 @@ menu:
 
 	pop {lr}
 	bx lr
+
+add_operands:
+	@ args: r0 = operand1, r1 = operand2
+	@ returns: r2 = answer
+	add r2, r0, r1
+
+	b output
+	
+
+sub_operands:
+	@ args: r0 = operand1, r1 = operand2
+	@ returns: r2 = answer
+	sub r2, r0, r1
+
+	b output
 
 input:
 	@ reads from stdin and loads it to buffer
