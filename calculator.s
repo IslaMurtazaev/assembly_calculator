@@ -14,6 +14,9 @@ exit_msg: .asciz "Application Exit!\n"
 str_fmt: .asciz "%s"
 int_fmt: .asciz "%d"
 sum_fmt: .asciz "%d+%d=%d\n"
+sub_fmt: .asciz "%d-%d=%d\n"
+mul_fmt: .asciz "%d*%d=%d\n"
+div_fmt: .asciz "%d/%d=%d\n"
 
 .section .text
 .global main
@@ -21,7 +24,7 @@ sum_fmt: .asciz "%d+%d=%d\n"
 .extern scanf
 
 main:
-	bl menu
+	bl display_menu
 input_operation:
 	@ Take user input for operation
 	@ store r8 = selected operation
@@ -53,8 +56,8 @@ input_operands:
 	ldr r10, [r1]
 calculate:
 	@ set operands as aguments to the following function
-	mov r0, r9
-	mov r1, r10
+	mov r1, r9
+	mov r2, r10
  
 	cmp r8, #1
 	beq add_operands
@@ -64,20 +67,10 @@ calculate:
 	beq mul_operands
 	cmp r8, #4
 	beq div_operands
-output:
-	mov r3, r2 @ set the third fmt param to answer
-
-	ldr r0, =sum_fmt
-	mov r1, r9 @ set first fmt param to operand1
-	mov r2, r10 @ set second fmt param to operand2
-	bl printf
-
-	@ restart the program
-	b main
 
 @ Functions
 
-menu:
+display_menu:
 	@ Print menu
 	push {lr}
 
@@ -89,32 +82,36 @@ menu:
 	bx lr
 
 add_operands:
-	@ args: r0 = operand1, r1 = operand2
-	@ returns: r2 = answer
-	add r2, r0, r1
+	@ args: r1 = operand1, r2 = operand2
+	add r3, r1, r2
+	ldr r0, =sum_fmt
 
-	b output
+	bl printf
+	b main
 
 sub_operands:
-	@ args: r0 = operand1, r1 = operand2
-	@ returns: r2 = answer
-	sub r2, r0, r1
+	@ args: r1 = operand1, r2 = operand2
+	sub r3, r1, r2
+	ldr r0, =sub_fmt
 
-	b output
+	bl printf
+	b main
 
 mul_operands:
-	@ args: r0 = operand1, r2 = operand2
-	@ returns: r2 = answer
-	mul r2, r0, r1
+	@ args: r1 = operand1, r2 = operand2
+	mul r3, r1, r2
+	ldr r0, =mul_fmt
 
-	b output
+	bl printf
+	b main
 
 div_operands:
-	@ args: r0 = operand1, r2 = operand2
-	@ returns: r2 = answer
-	sdiv r2, r0, r1
+	@ args: r1 = operand1, r2 = operand2
+	sdiv r3, r1, r2
+	ldr r0, =div_fmt
 
-	b output
+	bl printf
+	b main
 
 input:
 	@ reads from stdin and loads it to buffer
