@@ -4,7 +4,6 @@ buffer: .skip 4
 .section .data
 
 @ UI messages
-menu_prompt: .asciz "Calculator App\n1-Add\n2-Subtract\n3-Multiply\n4-Divide\n5-Exit\n"
 operation_prompt: .asciz "Enter Choice > "
 operand1_prompt: .asciz "Enter Operand 1 > "
 operand2_prompt: .asciz "Enter Operand 2 > "
@@ -13,15 +12,18 @@ exit_msg: .asciz "Application Exit!\n"
 @ Formats for input
 str_fmt: .asciz "%s"
 int_fmt: .asciz "%d"
-sum_fmt: .asciz "%d+%d=%d\n"
-sub_fmt: .asciz "%d-%d=%d\n"
 mul_fmt: .asciz "%d*%d=%d\n"
 div_fmt: .asciz "%d/%d=%d\n"
 
 .section .text
 .global main
+
 .extern printf
 .extern scanf
+
+.extern display_menu
+.extern add_operands
+.extern sub_operands
 
 main:
 	bl display_menu
@@ -70,32 +72,17 @@ calculate:
 
 @ Functions
 
-display_menu:
-	@ Print menu
+input:
+	@ stores the memory location of input in r1
 	push {lr}
 
-	ldr r0, =str_fmt
-	ldr r1, =menu_prompt
-	bl printf
+	ldr r0, =int_fmt
+	ldr r1, =buffer
+	bl scanf
+	ldr r1, =buffer
 
 	pop {lr}
 	bx lr
-
-add_operands:
-	@ args: r1 = operand1, r2 = operand2
-	add r3, r1, r2
-	ldr r0, =sum_fmt
-
-	bl printf
-	b main
-
-sub_operands:
-	@ args: r1 = operand1, r2 = operand2
-	sub r3, r1, r2
-	ldr r0, =sub_fmt
-
-	bl printf
-	b main
 
 mul_operands:
 	@ args: r1 = operand1, r2 = operand2
@@ -112,19 +99,6 @@ div_operands:
 
 	bl printf
 	b main
-
-input:
-	@ reads from stdin and loads it to buffer
-	@ stores the memory location of input in r1
-	push {lr}
-
-	ldr r0, =int_fmt
-	ldr r1, =buffer
-	bl scanf
-	ldr r1, =buffer
-
-	pop {lr}
-	bx lr
 
 end:
 	@ print exit message
