@@ -4,7 +4,7 @@ sub_fmt: .asciz "%d-%d=%d\n"
 .section .text
 .global sub_operands
 .extern printf
-.extern main
+.extern _start
 
 sub_operands:
 	@ args: r1 = operand1, r2 = operand2
@@ -12,5 +12,5 @@ sub_operands:
 
 	ldr r0, =sub_fmt
 	bl printf
-	b main
+	b _start
 

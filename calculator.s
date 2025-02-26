@@ -16,7 +16,7 @@ mul_fmt: .asciz "%d*%d=%d\n"
 div_fmt: .asciz "%d/%d=%d\n"
 
 .section .text
-.global main
+.global _start
 
 .extern printf
 .extern scanf
@@ -25,7 +25,7 @@ div_fmt: .asciz "%d/%d=%d\n"
 .extern add_operands
 .extern sub_operands
 
-main:
+_start:
 	bl display_menu
 input_operation:
 	@ Take user input for operation
@@ -90,7 +90,7 @@ mul_operands:
 	ldr r0, =mul_fmt
 
 	bl printf
-	b main
+	b _start
 
 div_operands:
 	@ args: r1 = operand1, r2 = operand2
@@ -98,7 +98,7 @@ div_operands:
 	ldr r0, =div_fmt
 
 	bl printf
-	b main
+	b _start
 
 end:
 	@ print exit message
