@@ -24,6 +24,7 @@ div_fmt: .asciz "%d/%d=%d\n"
 .extern display_menu
 .extern add_operands
 .extern sub_operands
+.extern input_operand
 
 _start:
 	bl display_menu
@@ -47,15 +48,15 @@ input_operands:
 	ldr r0, =str_fmt
 	ldr r1, =operand1_prompt
 	bl printf
-	bl input
-	ldr r9, [r1]
+	bl input_operand
+	mov r9, r1
 
 	@ Take user input for operand 2
 	ldr r0, =str_fmt
 	ldr r1, =operand2_prompt
 	bl printf
-	bl input
-	ldr r10, [r1]
+	bl input_operand
+	mov r10, r1
 calculate:
 	@ set operands as aguments to the following function
 	mov r1, r9
