@@ -12,8 +12,8 @@ exit_msg: .asciz "Application Exit!\n"
 @ Formats for input
 str_fmt: .asciz "%s"
 int_fmt: .asciz "%d"
-mul_fmt: .asciz "%d*%d=%d\n"
-div_fmt: .asciz "%d/%d=%d\n"
+mul_fmt: .asciz "%d.%02d\n"
+div_fmt: .asciz "%d.%02d\n"
 
 .section .text
 .global _start
@@ -87,16 +87,32 @@ input:
 
 mul_operands:
 	@ args: r1 = operand1, r2 = operand2
-	mul r3, r1, r2
+	mul r5, r1, r2
 	ldr r0, =mul_fmt
+
+	mov r6, #100
+	sdiv r3, r5, r6 @ get integer part
+	mul r7, r3, r6
+	sub r4, r5, r7 @ get fractional part
+
+	mov r1, r3
+	mov r2, r4
 
 	bl printf
 	b _start
 
 div_operands:
 	@ args: r1 = operand1, r2 = operand2
-	sdiv r3, r1, r2
+	sdiv r5, r1, r2
 	ldr r0, =div_fmt
+
+	mov r6, #100
+	sdiv r3, r5, r6 @ get integer part
+	mul r7, r3, r6
+	sub r4, r5, r7 @ get fractional part
+
+	mov r1, r3
+	mov r2, r4
 
 	bl printf
 	b _start
